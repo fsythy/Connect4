@@ -1,0 +1,169 @@
+<canvas id = "ctx" width="780" height="790";></canvas>
+<script>
+    var ctx = document.getElementById("ctx").getContext("2d")
+    const allEqual = arr => arr.every( v => v === arr[0])
+    const ColorPalette = ['#FFFFFF', '#FF0000', '#FFFF00', '#0000FF']
+    const Grid = [
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0]
+    ]
+    var Cursor = 3
+    var CurrentPlayer = 1
+    var winner = 0
+    ctx.fillStyle = ColorPalette[3];
+    ctx.fillRect(0, 120, 780, 670);
+    Drawcircles();
+    DrawTopLine();
+
+function Drawcircles(){
+    for(let i = 0; i < 6; i++){
+        for(let j = 0; j < 7; j++){
+            ctx.fillStyle = ColorPalette[Grid[i][j]];
+            ctx.beginPath();
+            ctx.arc(60 + (j * 110), 180 + (i * 110) , 50, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+    }
+}
+
+function LastZeroIndex(){
+    var LastZeroIndex = -1
+    for(let i = 0; i < 6; i++){
+        if(Grid[i][Cursor] === 0){
+            LastZeroIndex = i;
+        }else {
+            break;
+        }
+    }
+    return LastZeroIndex;
+}
+
+function DropCircle(){
+    Grid[LastZeroIndex()][Cursor] = CurrentPlayer;
+    if (checkWin()) {
+        alert('Player ' + CurrentPlayer + ' wins!');
+    }else if(isGridFull()){
+        alert('No player wins. The game is a draw.');
+    }
+    CurrentPlayer = 3 - CurrentPlayer;
+    Drawcircles();
+}
+
+document.onkeydown = function (e) {
+    if(e.key == 'd') {
+        if(Cursor != 6){
+            Cursor++;
+            DrawTopLine();
+        }
+    }else if (e.key == 'a'){
+        if(Cursor != 0){
+            Cursor--;
+            DrawTopLine();
+        }
+    }
+    if(e.key == 'Enter'){
+        if(LastZeroIndex() != -1){
+            DropCircle();
+            DrawTopLine();
+        }
+    } 
+}
+
+function DrawTopLine(){
+    ctx.fillStyle = ColorPalette[0];
+    ctx.fillRect(0, 0, 780, 120);
+    ctx.fillStyle = ColorPalette[CurrentPlayer];
+    ctx.beginPath();
+    ctx.arc(60 + (Cursor * 110), 60 , 50, 0, 2 * Math.PI);
+    ctx.fill();
+}
+
+function isGridFull() {
+  for (let row = 0; row < 6; row++) {
+    for (let col = 0; col < 7; col++) {
+      if (Grid[row][col] === 0) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+function checkWin() {
+  const rows = Grid.length;
+  const columns = Grid[0].length;
+
+  // Check horizontal
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < columns - 3; col++) {
+      if (
+        Grid[row][col] === CurrentPlayer &&
+        Grid[row][col + 1] === CurrentPlayer &&
+        Grid[row][col + 2] === CurrentPlayer &&
+        Grid[row][col + 3] === CurrentPlayer
+      ) {
+        return true;
+      }
+    }
+  }
+
+  // Check vertical
+  for (let col = 0; col < columns; col++) {
+    for (let row = 0; row < rows - 3; row++) {
+      if (
+        Grid[row][col] === CurrentPlayer &&
+        Grid[row + 1][col] === CurrentPlayer &&
+        Grid[row + 2][col] === CurrentPlayer &&
+        Grid[row + 3][col] === CurrentPlayer
+      ) {
+        return true;
+      }
+    }
+  }
+
+  // Check diagonal (ascending)
+  for (let row = 3; row < rows; row++) {
+    for (let col = 0; col < columns - 3; col++) {
+      if (
+        Grid[row][col] === CurrentPlayer &&
+        Grid[row - 1][col + 1] === CurrentPlayer &&
+        Grid[row - 2][col + 2] === CurrentPlayer &&
+        Grid[row - 3][col + 3] === CurrentPlayer
+      ) {
+        return true;
+      }
+    }
+  }
+
+  // Check diagonal (descending)
+  for (let row = 0; row < rows - 3; row++) {
+    for (let col = 0; col < columns - 3; col++) {
+      if (
+        Grid[row][col] === CurrentPlayer &&
+        Grid[row + 1][col + 1] === CurrentPlayer &&
+        Grid[row + 2][col + 2] === CurrentPlayer &&
+        Grid[row + 3][col + 3] === CurrentPlayer
+      ) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+// Usage:
+
+
+
+
+
+
+
+
+
+</script>
